@@ -4,10 +4,10 @@ namespace Omnipay\MobilPay\Message;
 
 use DOMDocument;
 use SimpleXMLElement;
-use Omnipay\MobilPay\Api\Invoice;
-use Omnipay\MobilPay\Api\Address;
-use Omnipay\MobilPay\Api\Recurrence;
-use Omnipay\MobilPay\Api\Request\Card;
+use Omnipay\MobilPay\Api\Mobilpay_Payment_Invoice;
+use Omnipay\MobilPay\Api\Mobilpay_Payment_Address;
+// use Omnipay\MobilPay\Api\Recurrence;
+use Omnipay\MobilPay\Api\Request\Mobilpay_Payment_Request_Card;
 use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\MobilPay\Exception\MissingKeyException;
 
@@ -232,20 +232,20 @@ class PurchaseRequest extends AbstractRequest
             throw new MissingKeyException("Missing public key path parameter");
         }
 
-        $request = new Card();
+        $request = new Mobilpay_Payment_Request_Card();
         $request->signature  = $this->getMerchantId();
         $request->orderId    = $this->getParameter('orderId');
         $request->confirmUrl = $this->getParameter('confirmUrl');
         $request->returnUrl  = $this->getParameter('returnUrl');
         $request->params     = $this->getParameter('params') ?: [];
 
-        if ($this->getParameter('recurrence')) {
-            $request->recurrence = new Recurrence();
-            $request->recurrence->payments_no = $this->getParameter('paymentNo');
-            $request->recurrence->interval_day = $this->getParameter('intervalDay');
-        }
+        // if ($this->getParameter('recurrence')) {
+        //     $request->recurrence = new Recurrence();
+        //     $request->recurrence->payments_no = $this->getParameter('paymentNo');
+        //     $request->recurrence->interval_day = $this->getParameter('intervalDay');
+        // }
 
-        $request->invoice = new Invoice();
+        $request->invoice = new Mobilpay_Payment_Invoice();
         $request->invoice->currency = $this->getParameter('currency');
         $request->invoice->amount   = $this->getParameter('amount');
         $request->invoice->details  = $this->getParameter('details');
@@ -258,7 +258,9 @@ class PurchaseRequest extends AbstractRequest
 
         $data = [
             'env_key' => $request->getEnvKey(),
-            'data'    => $request->getEncData()
+            'data'    => $request->getEncData(),
+            'cipher' => $request->getCipher(),
+            'iv' => $request->getIv()
         ];
 
         return $data;
@@ -272,7 +274,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function makeBillingAddress(array $parameters = [])
     {
-        $address = new Address();
+        $address = new Mobilpay_Payment_Address();
 
         $address->type           = $parameters['type']; // person or company
         $address->firstName      = $parameters['firstName'];

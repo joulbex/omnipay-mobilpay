@@ -3,7 +3,7 @@
 namespace Omnipay\MobilPay\Message;
 
 use stdClass;
-use Omnipay\MobilPay\Api\Request\AbstractRequest;
+use Omnipay\MobilPay\Api\Request\Mobilpay_Payment_Request_Abstract;
 use Omnipay\MobilPay\Exception\MissingKeyException;
 
 /**
@@ -85,12 +85,12 @@ class CompletePurchaseRequest extends PurchaseRequest
         $this->responseError = new stdClass();
 
         $this->responseError->code    = 0;
-        $this->responseError->type    = AbstractRequest::CONFIRM_ERROR_TYPE_NONE;
+        $this->responseError->type    = Mobilpay_Payment_Request_Abstract::CONFIRM_ERROR_TYPE_NONE;
         $this->responseError->message = '';
 
         if ($this->getIpnEnvKey() && $this->getIpnData()) {
             try {
-                $data = AbstractRequest::factoryFromEncrypted(
+                $data = Mobilpay_Payment_Request_Abstract::factoryFromEncrypted(
                     $this->getIpnEnvKey(),
                     $this->getIpnData(),
                     $this->getPrivateKey()
@@ -109,18 +109,18 @@ class CompletePurchaseRequest extends PurchaseRequest
                     $this->action,
                     ['confirmed_pending', 'paid_pending', 'paid', 'confirmed', 'canceled', 'credit']
                 )) {
-                    $this->responseError->type    = AbstractRequest::CONFIRM_ERROR_TYPE_PERMANENT;
-                    $this->responseError->code    = AbstractRequest::ERROR_CONFIRM_INVALID_ACTION;
+                    $this->responseError->type    = Mobilpay_Payment_Request_Abstract::CONFIRM_ERROR_TYPE_PERMANENT;
+                    $this->responseError->code    = Mobilpay_Payment_Request_Abstract::ERROR_CONFIRM_INVALID_ACTION;
                     $this->responseError->message = 'mobilpay_refference_action paramaters is invalid';
                 }
             } catch (Exception $e) {
-                $this->responseError->type    = AbstractRequest::CONFIRM_ERROR_TYPE_TEMPORARY;
+                $this->responseError->type    = Mobilpay_Payment_Request_Abstract::CONFIRM_ERROR_TYPE_TEMPORARY;
                 $this->responseError->code    = $e->getCode();
                 $this->responseError->message = $e->getMessage();
             }
         } else {
-            $this->responseError->type    = AbstractRequest::CONFIRM_ERROR_TYPE_PERMANENT;
-            $this->responseError->code    = AbstractRequest::ERROR_CONFIRM_INVALID_POST_PARAMETERS;
+            $this->responseError->type    = Mobilpay_Payment_Request_Abstract::CONFIRM_ERROR_TYPE_PERMANENT;
+            $this->responseError->code    = Mobilpay_Payment_Request_Abstract::ERROR_CONFIRM_INVALID_POST_PARAMETERS;
             $this->responseError->message = 'mobilpay.ro posted invalid parameters';
         }
 
