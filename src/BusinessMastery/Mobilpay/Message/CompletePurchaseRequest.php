@@ -71,6 +71,42 @@ class CompletePurchaseRequest extends PurchaseRequest
     }
 
     /**
+     * @param  string $value
+     * @return mixed
+     */
+    public function getCipher()
+    {
+        return $this->getParameter('cipher');
+    }
+
+    /**
+     * @param  string $value
+     * @return mixed
+     */
+    public function setCipher($value)
+    {
+        return $this->setParameter('cipher', $value);
+    }
+
+    /**
+     * @param  string $value
+     * @return mixed
+     */
+    public function getIv()
+    {
+        return $this->getParameter('iv');
+    }
+
+    /**
+     * @param  string $value
+     * @return mixed
+     */
+    public function setIv($value)
+    {
+        return $this->setParameter('iv', $value);
+    }
+
+    /**
      * Process IPN request data
      *
      * @return array
@@ -93,7 +129,10 @@ class CompletePurchaseRequest extends PurchaseRequest
                 $data = Mobilpay_Payment_Request_Abstract::factoryFromEncrypted(
                     $this->getIpnEnvKey(),
                     $this->getIpnData(),
-                    $this->getPrivateKey()
+                    $this->getPrivateKey(),
+                    null,
+                    $this->getCipher(),
+                    $this->getIv()
                 );
 
                 $this->responseError->message = $data->objPmNotify->getCrc();

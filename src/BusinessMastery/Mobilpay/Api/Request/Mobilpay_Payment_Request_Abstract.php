@@ -177,7 +177,7 @@ abstract class Mobilpay_Payment_Request_Abstract
 		return $objPmReq;
 	}
 	
-	static public function factoryFromEncrypted($envKey, $encData, $privateKeyFilePath, $privateKeyPassword = null, $cipher_algo = 'rc4', $iv = null)
+	static public function factoryFromEncrypted($envKey, $encData, $privateKeyFilePath, $privateKeyPassword = null, $cipher_algo = 'aes-256-cbc', $iv = null)
 	{
 		$privateKey = null;
 		if ($privateKeyPassword == null)
